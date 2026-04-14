@@ -1,191 +1,158 @@
-# GitHub Repository Description
+Drivable Area Segmentation: Real-Time MobileNetV3 + LR-ASPP
+Overview
 
-## Title
-**Drivable Area Segmentation: Real-Time MobileNetV3 + LR-ASPP**
+Drivable area segmentation is a crucial task for autonomous driving systems, enabling vehicles to distinguish between drivable and non-drivable regions. This repository implements a high-performance real-time segmentation model using MobileNetV3-Small and Lite R-ASPP decoder. It is trained on the nuScenes dataset and fine-tuned on BDD100K for better generalization, achieving an impressive 0.8516 mIoU. The model is optimized for real-time inference (~30 FPS) and supports both RGB-only and RGB+LiDAR+Radar input configurations.
 
----
+Project Summary
 
-## Short Description (for GitHub homepage)
-```
-High-performance drivable area segmentation for autonomous driving.
-MobileNetV3-Small + Lite R-ASPP. Trained on nuScenes, fine-tuned on
-BDD100K (0.8516 mIoU). Optimized for real-time inference (~30 FPS).
-Supports 3-channel RGB and 5-channel (RGB+LiDAR+Radar) inputs.
-```
-# Drivable Road Segmentation for Autonomous Vehicles
+Author: Arindam Sushil Katoch
+Challenge: MAHE-MOBILITY CHALLENGE/2026 (Team Submission)
+Role: Full-stack development (model architecture, training pipeline, data preprocessing, evaluation)
 
-** Developed by Arindam Sushil Katoch **  
-This project was created for [MAHE-MOBILITY CHALLENGE/2026] as a team submission.  
-**I built the entire model, training pipeline, data preprocessing, evaluation, and code .**
----
-Copyright © 2026 Arindam Sushil Katoch . All Rights Reserved.
-## Full Repository Description
-
-### 🎯 Purpose
-Real-time semantic segmentation model that distinguishes between drivable and non-drivable regions in driving scenes. Essential for autonomous vehicle path planning and navigation systems.
-
-### ⚡ Highlights
-- **0.8516 mIoU** on BDD100K validation set
-- **~1.1M parameters** - 125× smaller than ResNet50, optimized for embedded/edge deployment
-- **70+ FPS** inference speed on GPU
-- **Multi-stage training pipeline**: nuScenes base training → BDD100K fine-tuning
-- **Advanced loss functions**: Weighted BCE + Dice + Sobel boundary loss
-- **Multi-sensor support**: RGB-only or RGB+LiDAR+Radar with intelligent weight surgery
-- **Production-ready data pipeline**: 7-stage mask generation with morphological refinement
-
-### 🛠️ Technical Stack
-- **Framework**: PyTorch 2.0+
-- **Backbone**: MobileNetV3-Small (efficient CNN)
-- **Decoder**: Lite R-ASPP + Attention U-Net skip connections
-- **Training**: Mixed-precision (AMP), gradient clipping, OneCycleLR optimization
-- **Datasets**: nuScenes v1.0-mini, BDD100K
-- **Augmentation**: Albumentations (geometric + photometric)
-
-### 📦 Contents
-
-```python
+Key Features
+mIoU: 0.8516 on BDD100K validation set
+Model Size: ~1.1 million parameters, significantly smaller than ResNet50 (125×)
+Inference Speed: 70+ FPS on GPU, optimized for embedded systems
+Training Pipeline: Multi-stage pipeline (nuScenes → BDD100K)
+Advanced Loss Functions: Weighted BCE, Dice, and Sobel boundary loss
+Multi-sensor Fusion: Supports both RGB-only and multi-channel (RGB+LiDAR+Radar) inputs with intelligent weight surgery
+Robust Data Pipeline: 7-stage mask generation and morphological refinement for accurate segmentation
+Technical Stack
+Framework: PyTorch 2.0+
+Backbone: MobileNetV3-Small (lightweight, efficient CNN)
+Decoder: Lite R-ASPP + Attention U-Net skip connections
+Training Optimization: Mixed-precision training (AMP), gradient clipping, OneCycleLR scheduler
+Datasets: nuScenes v1.0-mini, BDD100K
+Data Augmentation: Albumentations (geometric and photometric)
+Repository Structure
 # Data Processing
-data_prep.py          → Generate image-mask pairs from nuScenes HD maps
-refine_masks.py       → Post-hoc morphological refinement
-visualize.py          → Ground truth visualization
+data_prep.py          → Image-mask generation from nuScenes HD maps
+refine_masks.py       → Morphological refinement for mask post-processing
+visualize.py          → Ground truth visualization for comparison
 
 # Model Architecture
 model.py              → 5-channel (RGB+LiDAR+Radar) segmentation model
-model_rgb.py          → 3-channel RGB-only version with weight surgery
+model_rgb.py          → 3-channel RGB-only model with weight surgery
 dataset.py            → nuScenes dataset loader
 dataset_bdd.py        → BDD100K dataset loader
 
 # Training & Inference
-train.py              → Base training on nuScenes (~30 epochs)
-finetune_bdd.py       → Two-stage fine-tuning on BDD100K (~80 epochs)
-predict.py            → Batch inference with visualization
+train.py              → Base model training on nuScenes dataset (~30 epochs)
+finetune_bdd.py       → Fine-tuning on BDD100K (~80 epochs)
+predict.py            → Inference and batch processing with visualizations
 
 # Pre-trained Checkpoint
-best_model_bdd.pth    → Fine-tuned model achieving 0.8516 mIoU
-```
+best_model_bdd.pth    → Fine-tuned model achieving 0.8516 mIoU on BDD100K
+Quick Start Guide
+Installation
 
-### 🚀 Quick Start
+Install the required dependencies:
 
-```bash
-# Install dependencies
 pip install torch torchvision albumentations opencv-python tqdm nuscenes
+Data Preparation
 
-# Prepare data (nuScenes)
+Prepare the nuScenes data for training:
+
 python data_prep.py
+Training
 
-# Train base model
+Train the base model on nuScenes:
+
 python train.py
+Fine-Tuning
 
-# Fine-tune on BDD100K
+Fine-tune the model on BDD100K:
+
 python finetune_bdd.py
+Inference
 
-# Run inference
+Run inference and visualize results:
+
 python predict.py
-```
+Performance Metrics
+Metric	Value
+mIoU (BDD100K)	0.8516
+Drivable Class IoU	~87.5%
+Non-drivable Class IoU	~82.8%
+Model Parameters	1.1M
+FPS (GPU)	70+ FPS
+Inference Time	33-40 ms
+Technical Innovations
+Geometric Projection: Efficient transformation from 3D HD map polygons to 2D camera images for better segmentation accuracy.
+GrabCut Refinement: Interactive segmentation based on projected masks for precise boundary detection.
+Boundary Loss: Sobel-based penalty function incorporated to enhance accuracy near road boundaries.
+Weight Surgery: Conversion of a 5-channel model to a 3-channel model without any performance loss.
+Two-Stage Fine-tuning: First, a warm-up with frozen encoder layers followed by full model fine-tuning to improve convergence.
+Model Architecture Overview
 
-### 📊 Key Results
+The model consists of an encoder-decoder architecture for efficient semantic segmentation:
 
-| Metric | Value |
-|--------|-------|
-| mIoU (BDD100K) | 0.8516 |
-| Drivable Class IoU | ~87.5% |
-| Non-drivable Class IoU | ~82.8% |
-| Model Parameters | 1.1M |
-| FPS (GPU) | 70+ |
-| Inference Time | 33-40 ms |
-
-### 🔧 Technical Innovations
-
-1. **Geometric Projection**: 3D HD map polygons → 2D camera images via coordinate transformation
-2. **GrabCut Refinement**: Interactive segmentation using projected masks as seeds
-3. **Boundary Loss**: Sobel-based edge penalty for accurate road boundaries
-4. **Weight Surgery**: Converts 5-channel checkpoint to 3-channel without knowledge loss
-5. **Two-Stage Fine-tuning**: Frozen encoder (warm-up) → full model (convergence)
-
-### 📚 Architecture Diagram
-
-```
 Input Image [B, 3, H, W]
       ↓
 MobileNetV3-Small Encoder
   (11 × Inverted Residual Blocks)
-  Features at stride 4×, 8×, 16×, 32×
       ↓
 Lite R-ASPP Module
   (Multi-scale parallel pooling)
       ↓
 Attention U-Net Decoder
-  (Transposed conv + attention gates)
+  (Transposed convolution + attention gates)
       ↓
 Output Logit Map [B, 1, H, W]
       ↓
 Sigmoid + Threshold (0.5)
       ↓
 Binary Mask [B, 1, H, W]
-```
+Use Cases
+Autonomous Vehicle Navigation: Identifying drivable paths for safe vehicle navigation.
+Drivable Surface Detection: Detecting roads, parking lots, and driveways.
+Scene Understanding: Assisting autonomous vehicles in perceiving and navigating the environment.
+Mobile Robotics: Enabling mobile robots to avoid obstacles and find clear paths.
+Drone Landing Zones: Identifying safe landing zones for autonomous drones.
+Advanced Features
+Data Pipeline:
+3D HD map integration with nuScenes for geometric transformations (world → ego → camera)
+Multi-stage mask refinement (7 stages) using morphological operations for better segmentation.
+Quality validation and outlier detection to ensure accurate data input.
+Training:
+Mixed-precision training (AMP) to optimize memory usage.
+Gradient clipping to avoid exploding gradients and ensure stable training.
+OneCycleLR scheduling for efficient convergence.
+Early stopping with configurable patience to avoid overfitting.
+Checkpoint management for saving model, optimizer, and metrics during training.
+Inference:
+Batch processing for faster evaluation.
+Morphological post-processing for mask refinement.
+Visualization support with overlays and contour drawings.
+Multi-image grid generation for displaying results across several test cases.
+Documentation
 
-### 💡 Use Cases
-- Autonomous vehicle navigation and path planning
-- Drivable surface detection (roads, parking lots, driveways)
-- Scene understanding for self-driving cars
-- Mobile robotics obstacle avoidance
-- Drone landing zone detection
+This repository includes comprehensive documentation to guide you through:
 
-### 🔬 Advanced Features
-
-**Data Pipeline:**
-- Geometric coordinate transformations (world → ego → camera)
-- HD map integration with nuScenes
-- Multi-stage mask refinement (7 stages total)
-- Quality validation and outlier detection
-
-**Training:**
-- Mixed-precision training (AMP) for memory efficiency
-- Gradient clipping and normalization
-- OneCycleLR scheduling for smooth convergence
-- Early stopping with configurable patience
-- Checkpoint management (model + optimizer + metrics)
-
-**Inference:**
-- Batch processing support
-- FPS benchmarking
-- Morphological post-processing
-- Visualization with overlays and contours
-- Multi-image grid generation
-
-### 📖 Documentation
-Comprehensive README with:
-- Detailed architecture explanation
-- Complete training walkthrough
-- Inference and visualization guides
-- Hyperparameter tuning tips
-- FAQ and troubleshooting
-
-### 🎓 Learning Value
-- End-to-end autonomous driving perception pipeline
-- Modern deep learning best practices (mixed precision, scheduling, early stopping)
-- Real-time model optimization techniques
-- Transfer learning and fine-tuning strategies
-- Multi-stage training methodologies
-
-### 📝 Files Overview
-
-| File | Purpose | Key Features |
-|------|---------|--------------|
-| `data_prep.py` | HD map → image/mask generation | 7-stage refinement, geometric projection |
-| `train.py` | Base model training | Combined loss, AMP, OneCycleLR |
-| `finetune_bdd.py` | Fine-tuning on BDD100K | Two-stage strategy, focal tversky loss |
-| `model.py` | 5-channel architecture | SE blocks, inverted residuals |
-| `model_rgb.py` | 3-channel architecture | Weight surgery, channel reduction |
-| `predict.py` | Inference pipeline | Batch processing, visualization, FPS |
-| `dataset.py` | nuScenes loader | Augmentation pipeline with albumentations |
-| `dataset_bdd.py` | BDD100K loader | Automatic pairing, color label extraction |
-| `visualize.py` | Ground truth display | Image-mask-overlay visualization |
-| `refine_masks.py` | Post-hoc refinement | Morphology, texture, edge-based cleanup |
-
-### 🔄 Workflow
-
-```
+Detailed architecture explanations.
+Complete training instructions.
+Inference and visualization guides.
+Hyperparameter tuning strategies.
+FAQ and troubleshooting section for resolving common issues.
+Learning Outcomes
+End-to-end autonomous driving perception pipeline using deep learning.
+Best practices in deep learning: mixed precision, advanced training techniques.
+Real-time model optimization methods suitable for edge devices.
+Transfer learning and fine-tuning strategies for domain adaptation.
+Multi-stage training methodologies that improve model performance across datasets.
+File Overview
+File	Purpose	Key Features
+data_prep.py	HD map → image/mask generation	7-stage refinement, geometric projection
+train.py	Base model training	Combined loss, AMP, OneCycleLR
+finetune_bdd.py	Fine-tuning on BDD100K	Two-stage strategy, focal tversky loss
+model.py	5-channel architecture	SE blocks, inverted residuals
+model_rgb.py	3-channel architecture	Weight surgery, channel reduction
+predict.py	Inference pipeline	Batch processing, visualization, FPS
+dataset.py	nuScenes dataset loader	Augmentation pipeline with albumentations
+dataset_bdd.py	BDD100K dataset loader	Automatic pairing, color label extraction
+visualize.py	Ground truth display	Image-mask-overlay visualization
+refine_masks.py	Post-hoc refinement	Morphology, texture, edge-based cleanup
+Workflow
 Raw nuScenes Dataset
         ↓
 data_prep.py (geom projection + GrabCut + morphology)
@@ -203,45 +170,19 @@ best_model_bdd.pth ⭐ (0.8516 mIoU)
 predict.py (inference on test images)
         ↓
 Predictions + Visualizations
-```
-
-### ✨ Why This Project Stands Out
-
-1. **Production-Ready Code**: Fully documented, modular, and tested
-2. **Complete Pipeline**: From raw data to trained model to inference
-3. **State-of-the-Art Results**: 0.8516 mIoU competitive with larger models
-4. **Efficient Architecture**: 1.1M parameters for real-time deployment
-5. **Best Practices**: Modern training techniques (AMP, scheduling, early stopping)
-6. **Multi-Dataset**: Demonstrates transfer learning (nuScenes → BDD100K)
-7. **Research-Grade**: Papers cited, methods explained, equations provided
-8. **Practical**: Ready to integrate into autonomous driving systems
-
-### 🏆 Achievements
-✅ Lightweight architecture (1.1M params vs 135M+ for ResNet)  
-✅ Competitive accuracy (0.8516 mIoU on BDD100K)  
-✅ Real-time performance (70 FPS on GPU)  
-✅ Multi-sensor fusion capability  
-✅ Complete data-to-deployment pipeline  
-✅ Research-backed methodology  
-
-### 📚 References
-- MobileNetV3 paper
-- Lite R-ASPP architecture
-- Attention U-Net
-- Dice Loss & Focal Tversky Loss
-- nuScenes dataset
-- BDD100K dataset
-
-### 🔗 Links
-- [nuScenes Dataset](https://www.nuscenes.org/)
-- [BDD100K Dataset](https://bdd100k.com/)
-- [PyTorch Documentation](https://pytorch.org/)
-- [Albumentations Library](https://albumentations.ai/)
-
----
-
-## Topics/Tags
-```
+Why This Project Stands Out
+Production-Ready: Fully modular, documented, and tested codebase.
+End-to-End Pipeline: From data collection to model training and inference.
+State-of-the-Art Results: Achieves competitive accuracy (0.8516 mIoU) with much smaller models.
+Real-Time Optimization: Efficient architecture with real-time deployment in mind.
+Best Practices: Incorporates modern training techniques, transfer learning, and real-time optimizations.
+References
+MobileNetV3: https://arxiv.org/abs/1905.02244
+Lite R-ASPP: https://arxiv.org/abs/2005.10910
+Attention U-Net: https://arxiv.org/abs/1804.03999
+nuScenes Dataset: https://www.nuscenes.org/
+BDD100K Dataset: https://bdd100k.com/
+Tags
 autonomous-driving
 semantic-segmentation
 mobilenetv3
@@ -254,14 +195,3 @@ bdd100k
 nuscenes
 embedded-ml
 edge-computing
-```
-
-## Categories
-- Autonomous Driving
-- Computer Vision
-- Deep Learning
-- Semantic Segmentation
-- Mobile/Embedded ML
-- PyTorch
-
----
