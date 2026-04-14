@@ -66,7 +66,7 @@ This repository implements a high-performance real-time segmentation model for d
 ### **Installation**
 
 Install the necessary dependencies:
-```bash
+
 pip install torch torchvision albumentations opencv-python tqdm nuscenes
 
 Data Preparation
@@ -89,6 +89,7 @@ Inference
 Run inference on test images:
 
 python predict.py
+
 Performance Metrics
 Metric	Value
 mIoU (BDD100K)	0.8516
@@ -97,6 +98,7 @@ Non-drivable Class IoU	~82.8%
 Model Parameters	1.1M
 FPS (GPU)	70+ FPS
 Inference Time	33-40 ms
+
 Technical Innovations
 Geometric Projection: Converts 3D HD map polygons to 2D camera images for better segmentation accuracy.
 GrabCut Refinement: Uses projected masks as seeds for interactive segmentation.
@@ -123,6 +125,8 @@ Output Logit Map [B, 1, H, W]
 Sigmoid + Threshold (0.5)
       ↓
 Binary Mask [B, 1, H, W]
+
+
 Use Cases
 Autonomous Vehicle Navigation: Helps autonomous vehicles determine safe and drivable paths.
 Drivable Surface Detection: Detects roads, parking lots, driveways, and more.
@@ -143,22 +147,27 @@ Inference and visualization instructions
 Hyperparameter tuning tips
 Troubleshooting guides
 Learning Outcomes
+
 Learn how to build an end-to-end autonomous driving perception pipeline.
 Gain experience with modern deep learning techniques: mixed precision, scheduling, and transfer learning.
 Understand how to deploy a real-time, efficient deep learning model on embedded systems.
 Learn the details of multi-stage training pipelines and data processing techniques.
+
 Why This Project Stands Out
 Modular and Production-Ready: Well-structured, documented codebase for easy integration.
 Competitive Performance: 0.8516 mIoU with a lightweight model (1.1M parameters).
 Real-Time Performance: Optimized for embedded systems and edge devices.
 Transfer Learning: Effective fine-tuning from nuScenes to BDD100K dataset.
 Best Practices: Implements modern deep learning techniques like AMP, OneCycleLR, and gradient clipping.
+
 References
 MobileNetV3: https://arxiv.org/abs/1905.02244
 Lite R-ASPP: https://arxiv.org/abs/2005.10910
 Attention U-Net: https://arxiv.org/abs/1804.03999
 nuScenes Dataset: https://www.nuscenes.org/
 BDD100K Dataset: https://bdd100k.com/
+
+
 Tags
 autonomous-driving
 semantic-segmentation
@@ -172,16 +181,5 @@ bdd100k
 nuscenes
 embedded-ml
 edge-computing
-Categories
-Autonomous Driving
-Computer Vision
-Deep Learning
-Semantic Segmentation
-Mobile/Embedded ML
-PyTorch
 
----
 
-This **README** file provides all the necessary details about your repository and files. It is structured in a way that is easy to navigate and understand for anyone visiting your repository. Just copy and paste this into your **README.md** file in the root of your GitHub repository.
-
-Let me know if you'd like any further modifications!
